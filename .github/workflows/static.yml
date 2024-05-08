@@ -24,4 +24,4 @@ jobs:
           git checkout gh-pages # Create a new branch for the changes
           git add . # Stage all changes
           git commit -m "Auto-generated files" # Commit changes
-          git push https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }} gh-pages # Push changes to the new branch using PAT
+          git push https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}  # Push changes to the new branch using PAT

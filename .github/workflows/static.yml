@@ -10,23 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create File
-        run: echo "This is a dynamically created file." > example.txt
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Generate files
+        run: |
+          touch dynamic-file.txt
 
-      - name: Display File Contents
-        run: cat example.txt
-
-      - name: Commit and Push Changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Add example.txt"
-          branch: gh-pages
-          author_name: GitHub Actions
-          author_email: actions@github.com
-
-      - name: Publish File to Branch
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-branch # Specify the branch you want to publish to
-          directory: . # Publish the entire repository
+      - name: Commit and push changes
+        run: |
+          git config user.name 'GitHub Actions'
+          git config user.email 'actions@github.com'
+          git checkout gh-pages # Create a new branch for the changes
+          git add . # Stage all changes
+          git commit -m "Auto-generated files" # Commit changes
+          git push https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }} gh-pages # Push changes to the new branch using PAT

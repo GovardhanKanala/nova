@@ -43,5 +43,5 @@ jobs:
         uses: actions/deploy-pages@v4
         with:
           github_token: ${{ secrets.GITHUBTOKEN }}
-          publish_dir: ./ # Specify the directory where your built static content resides
+          publish_dir: '.' # Specify the directory where your built static content resides
           target_branch: gh-pages # S

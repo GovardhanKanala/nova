@@ -24,4 +24,4 @@ jobs:
           git checkout -b dynamic-files || true # Create a new branch for the changes or switch to existing
           git add . # Stage all changes
           git commit -m "Auto-generated files" # Commit changes
-          git push https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }} dynamic-files # Push changes to the new branch using PAT
+          git push https://${{ secrets.GITHUBTOKEN }}@github.com/${{ github.repository }} dynamic-files # Push changes to the new branch using PAT

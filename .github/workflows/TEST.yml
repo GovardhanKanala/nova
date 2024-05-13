@@ -1,3 +1,16 @@
+
+If you're encountering the message "Canceling since a higher priority waiting request for 'single-pipeline' exists" even after setting cancel-in-progress: false, it might indicate that there's another workflow with a higher priority that's queued and waiting to run.
+
+To ensure that your workflow isn't canceled in such scenarios, you can consider the following options:
+
+Increase Concurrency Group Priority: If there are other workflows with higher priority in the same concurrency group, try to adjust their priority. GitHub Actions prioritizes workflows based on several factors, including the trigger event, workflow type, and concurrency group. You can ensure that your workflow has a higher priority by adjusting these factors.
+
+Dedicated Concurrency Group: Create a dedicated concurrency group specifically for your workflow to avoid interference from other workflows. This ensures that your workflow has its own dedicated resources and won't be canceled due to higher priority requests in other concurrency groups.
+
+Here's an example of how you can set up a dedicated concurrency group for your workflow:
+
+yaml
+Copy code
 name: Single Pipeline
 
 on:
@@ -24,6 +37,7 @@ jobs:
       - name: Step 3
         run: echo "This is job 3"
 
-# Concurrency control, only one workflow run is allowed at a time
+# Use a dedicated concurrency group for the workflow to prevent interference from other workflows
 concurrency:
-  group: single-pipeline
+  group: single-pipeline-dedicated
+  cancel-in-progress: false

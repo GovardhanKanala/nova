@@ -10,39 +10,39 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      # - name: Checkout Repository
+      #   uses: actions/checkout@v2
         
-      - name: Get GitHub Pages status
-        run: |
-          REPO_OWNER="GovardhanKanala"
-          REPO_NAME="nova"
-          BRANCH="gh-pages"
-          GITHUB_TOKEN="${{ secrets.GITHUBTOKEN }}"
+      # - name: Get GitHub Pages status
+      #   run: |
+      #     REPO_OWNER="GovardhanKanala"
+      #     REPO_NAME="nova"
+      #     BRANCH="gh-pages"
+      #     GITHUB_TOKEN="${{ secrets.GITHUBTOKEN }}"
           
-          API_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/deployments?environment=github-pages&sha=${BRANCH}"
+      #     API_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/deployments?environment=github-pages&sha=${BRANCH}"
           
-          # Save the response to a temporary file
-          curl -s -H "Authorization: token ${GITHUBTOKEN}" ${API_URL} > response.json
+      #     # Save the response to a temporary file
+      #     curl -s -H "Authorization: token ${GITHUBTOKEN}" ${API_URL} > response.json
           
-      - name: Check GitHub Pages status
-        run: |
-          # Read the response from the temporary file
-          response=$(cat response.json)
+      # - name: Check GitHub Pages status
+      #   run: |
+      #     # Read the response from the temporary file
+      #     response=$(cat response.json)
           
-          if [[ -z "$response" ]]; then
-            echo "No response from GitHub API. Proceeding with publishing."
-          else
-            in_progress=$(echo "$response" | jq -r '.[0].status // empty')
-            if [[ -z "$in_progress" ]]; then
-              echo "No ongoing deployment. Proceeding with publishing."
-            elif [[ "$in_progress" == "in_progress" ]]; then
-              echo "GitHub Pages deployment is in progress. Waiting for 1 minute before retrying."
-              sleep 60
-            else
-              echo "Unexpected status. Proceeding with publishing."
-            fi
-          fi
+      #     if [[ -z "$response" ]]; then
+      #       echo "No response from GitHub API. Proceeding with publishing."
+      #     else
+      #       in_progress=$(echo "$response" | jq -r '.[0].status // empty')
+      #       if [[ -z "$in_progress" ]]; then
+      #         echo "No ongoing deployment. Proceeding with publishing."
+      #       elif [[ "$in_progress" == "in_progress" ]]; then
+      #         echo "GitHub Pages deployment is in progress. Waiting for 1 minute before retrying."
+      #         sleep 60
+      #       else
+      #         echo "Unexpected status. Proceeding with publishing."
+      #       fi
+      #     fi
 
       - name: Generate Sample File
         run: echo "Hello, GitHub Pages!" > index.html

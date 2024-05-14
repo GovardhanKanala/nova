@@ -49,15 +49,31 @@
             }
         }
 
+        // Fetch content of a file from GitHub repository
+        async function fetchFileContent(filePath) {
+            try {
+                const response = await fetch(`https://raw.githubusercontent.com/${repoOwner}/${repoName}/${branchName}/${filePath}`);
+                const data = await response.text();
+                return data;
+            } catch (error) {
+                console.error('Error fetching file content:', error);
+            }
+        }
+
         // Display file list on the webpage
         async function displayFileList() {
             const fileListElement = document.getElementById('fileList');
             const files = await fetchFiles();
-            files.forEach(file => {
+            files.forEach(async file => {
                 const listItem = document.createElement('li');
                 const link = document.createElement('a');
-                link.href = file.html_url;
                 link.textContent = file.name;
+                link.onclick = async () => {
+                    const content = await fetchFileContent(file.path);
+                    document.open();
+                    document.write(content);
+                    document.close();
+                };
                 listItem.appendChild(link);
                 fileListElement.appendChild(listItem);
             });

@@ -1,9 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repository File List</title>
+</head>
 <body>
+    <h1>Files in Current Repository</h1>
+    <div id="file-contents">
+        <!-- File contents will be displayed here -->
+    </div>
 
-<h1>My First Heading</h1>
-<p>My 4 paragraph.</p>
+    <script>
+        // Function to fetch file contents and display them
+        async function fetchAndDisplayFileContents(fileUrl) {
+            try {
+                const response = await fetch(fileUrl);
+                const data = await response.text();
 
+                // Display file contents
+                const fileContentsDiv = document.getElementById('file-contents');
+                const pre = document.createElement('pre');
+                pre.textContent = data;
+                fileContentsDiv.appendChild(pre);
+            } catch (error) {
+                console.error('Error fetching file contents:', error);
+            }
+        }
+
+        // Function to fetch files in the repository
+        async function fetchFiles() {
+            try {
+                const response = await fetch('https://api.github.com/repos/GovardhanKanala/nova/contents?ref=gh-pages');
+                const data = await response.json();
+                
+                // Display contents of each file
+                data.forEach(file => {
+                    if (file.type === 'file') {
+                        fetchAndDisplayFileContents(file.download_url);
+                    }
+                });
+            } catch (error) {
+                console.error('Error fetching files:', error);
+            }
+        }
+
+        // Call fetchFiles function when page loads
+        fetchFiles();
+    </script>
 </body>
 </html>

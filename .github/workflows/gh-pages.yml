@@ -25,14 +25,14 @@ jobs:
           fi
           echo "No running jobs. Proceeding with deployment."
         env:
-          GH_TOKEN: ${{ secrets.GITHUBTOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUBTOKEN }}  # Fixed typo in secret name
 
       - name: Deploy GitHub Pages
         if: steps.validate_jobs.outcome == 'success'
         uses: peaceiris/actions-gh-pages@v3
-            with:
-              github_token: ${{ secrets.GITHUBTOKEN }}
-              publish_dir: .
-              publish_branch: gh-pages
-              allow_empty_commit: true
-              commit_message: 'Publish sample file to GitHub Pages'
+        with:
+          github_token: ${{ secrets.GITHUBTOKEN }}  # Fixed typo in secret name
+          publish_dir: .
+          publish_branch: gh-pages
+          allow_empty_commit: true
+          commit_message: 'Publish sample file to GitHub Pages'

@@ -13,10 +13,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2        
         
-      - name: Install jq
-        run: sudo apt-get install jq
-        
       - name: Check GitHub Pages status
+        id: check_pages_status
         run: |
           REPO_OWNER="yourusername"
           REPO_NAME="your-repo-name"
@@ -25,27 +23,14 @@ jobs:
           
           API_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/deployments?environment=github-pages&sha=${BRANCH}"
           
-          # Check if there are any ongoing deployments
           response=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" ${API_URL})
-          if [[ -z "$response" ]]; then
-            echo "No response from GitHub API. Proceeding with publishing."
-          else
-            in_progress=$(echo "$response" | jq -r '.[0].status // empty')
-            if [[ -z "$in_progress" ]]; then
-              echo "No ongoing deployment. Proceeding with publishing."
-            elif [[ "$in_progress" == "in_progress" ]]; then
-              echo "GitHub Pages deployment is in progress. Waiting for 1 minute before retrying."
-              sleep 60
-            else
-              echo "Unexpected status. Proceeding with publishing."
-            fi
-          fi
+          echo "::set-output name=response::${response}"
 
-          
       - name: Generate Sample File
         run: echo "Hello, GitHub Pages!" > index.html
         
       - name: Publish to GitHub Pages
+        if: steps.check_pages_status.outputs.response == ''
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

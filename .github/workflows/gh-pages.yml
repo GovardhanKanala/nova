@@ -18,12 +18,12 @@ jobs:
           REPO_OWNER="GovardhanKanala"
           REPO_NAME="nova"
           BRANCH="gh-pages"
-          GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN="${{ secrets.GITHUBTOKEN }}"
           
           API_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/deployments?environment=github-pages&sha=${BRANCH}"
           
           # Save the response to a temporary file
-          curl -s -H "Authorization: token ${GITHUB_TOKEN}" ${API_URL} > response.json
+          curl -s -H "Authorization: token ${GITHUBTOKEN}" ${API_URL} > response.json
           
       - name: Check GitHub Pages status
         run: |
@@ -50,7 +50,7 @@ jobs:
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUBTOKEN }}
           publish_dir: .
           publish_branch: gh-pages
           allow_empty_commit: true

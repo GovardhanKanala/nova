@@ -1,0 +1,54 @@
+name: Publish to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          
+      - name: Install jq
+        run: sudo apt-get install jq
+        
+      - name: Check GitHub Pages status
+        run: |
+          REPO_OWNER="GovardhanKanala"
+          REPO_NAME="nova"
+          BRANCH="gh-pages"
+          GITHUB_TOKEN="${{ secrets.GITHUBTOKEN }}"
+          
+          API_URL="https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/deployments?environment=github-pages&sha=${BRANCH}"
+          
+          while true; do
+              response=$(curl -s -H "Authorization: token ${GITHUB_TOKEN}" ${API_URL})
+              if [[ $(echo "$response" | jq -r '.[0].status') == "in_progress" ]]; then
+                  echo "GitHub Pages deployment is in progress. Waiting for 1 minute before retrying."
+                  sleep 60
+              else
+                  echo "No ongoing deployment. Proceeding with publishing."
+                  break
+              fi
+          done
+          
+      - name: Generate Sample File
+        run: echo "Hello, GitHub Pages!" > index.html
+        
+      - name: Publish to GitHub Pages
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add index.html
+          git commit -m "Publish sample file to GitHub Pages"
+          git subtree split --prefix . -b gh-pages-temp
+          git push -f origin gh-pages-temp:gh-pages

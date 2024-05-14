@@ -1,9 +1,7 @@
 name: Deploy GitHub Pages
 
 on:
-  push:
-    branches:
-      - main  # Adjust to your main branch
+  workflow_dispatch: 
 
 jobs:
   deploy:

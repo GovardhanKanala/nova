@@ -16,8 +16,8 @@ jobs:
       - name: Check GitHub Pages status
         id: check_pages_status
         run: |
-          REPO_OWNER="yourusername"
-          REPO_NAME="your-repo-name"
+          REPO_OWNER="GovardhanKanala"
+          REPO_NAME="nova"
           BRANCH="gh-pages"
           GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
           

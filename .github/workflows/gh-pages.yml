@@ -30,12 +30,14 @@ jobs:
           if [[ -z "$response" ]]; then
             echo "No response from GitHub API. Proceeding with publishing."
           else
-            in_progress=$(echo "$response" | jq -r '.[0].status')
-            if [[ "$in_progress" == "in_progress" ]]; then
+            in_progress=$(echo "$response" | jq -r '.[0].status // empty')
+            if [[ -z "$in_progress" ]]; then
+              echo "No ongoing deployment. Proceeding with publishing."
+            elif [[ "$in_progress" == "in_progress" ]]; then
               echo "GitHub Pages deployment is in progress. Waiting for 1 minute before retrying."
               sleep 60
             else
-              echo "No ongoing deployment. Proceeding with publishing."
+              echo "Unexpected status. Proceeding with publishing."
             fi
           fi
 
@@ -46,7 +48,7 @@ jobs:
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUBTOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
           publish_branch: gh-pages
           allow_empty_commit: true

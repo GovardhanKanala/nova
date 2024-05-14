@@ -49,10 +49,10 @@ jobs:
         run: echo "Hello, GitHub Pages!" > index.html
         
       - name: Publish to GitHub Pages
-              uses: peaceiris/actions-gh-pages@v3
-              with:
-                github_token: ${{ secrets.GITHUBTOKEN }}
-                publish_dir: .
-                publish_branch: gh-pages
-                allow_empty_commit: true
-                commit_message: 'Publish sample file to GitHub Pages'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUBTOKEN }}
+          publish_dir: .
+          publish_branch: gh-pages
+          allow_empty_commit: true
+          commit_message: 'Publish sample file to GitHub Pages'

@@ -17,6 +17,8 @@ jobs:
       - name: Test command
         run: |
            gh run list --status=in_progress --workflow=pages-build-deployment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUBTOKEN }}
       - name: Retry Deployment
         run: |
           for ((i=1; i<=5; i++)); do

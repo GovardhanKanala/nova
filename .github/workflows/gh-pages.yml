@@ -1,52 +1,38 @@
-name: Publish to GitHub Pages
+name: Deploy GitHub Pages
 
 on:
   push:
     branches:
-      - main
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+      - main  # Adjust to your main branch
 
 jobs:
   deploy:
+    name: Deploy Pages if no running jobs
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Set up Git
+      - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Version
+
+      - name: Validate no running jobs
+        id: validate_jobs
         run: |
-           gh --version > version.txt
-           cat version.txt
-      - name: Install GitHub CLI
-        run: |
-          sudo apt update
-          sudo apt install gh -y
-      - name: Test command
-        run: |
-           gh run list --status=in_progress --workflow=pages-build-deployment
+          jobs=$(gh run list --status=in_progress --workflow=pages-build-deployment | wc -l)
+          if [[ $jobs -gt 0 ]]; then
+            echo "There are running jobs. Waiting before retrying..."
+            sleep 300  # Adjust wait time as needed
+            exit 1
+          fi
+          echo "No running jobs. Proceeding with deployment."
         env:
           GH_TOKEN: ${{ secrets.GITHUBTOKEN }}
-      - name: Retry Deployment
-        run: |
-          for ((i=1; i<=5; i++)); do
-            if ! gh run list --status=in_progress --workflow=pages-build-deployment; then
-              echo "Builds are still running. Waiting for 5 minutes before retrying ($i/5)."
-              sleep 300 # Wait for 5 minutes
-            else
-              echo "No builds are running. Proceeding with deployment."
-              break # Exit the loop if no builds are running
-            fi
-          done
-        
-      - name: Publish to GitHub Pages
-        if: success() # Only run if the previous step was successful
+
+      - name: Deploy GitHub Pages
+        if: steps.validate_jobs.outcome == 'success'
         uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUBTOKEN }}
-          publish_dir: .
-          publish_branch: gh-pages
-          allow_empty_commit: true
-          commit_message: 'Publish sample file to GitHub Pages'
+            with:
+              github_token: ${{ secrets.GITHUBTOKEN }}
+              publish_dir: .
+              publish_branch: gh-pages
+              allow_empty_commit: true
+              commit_message: 'Publish sample file to GitHub Pages'

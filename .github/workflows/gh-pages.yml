@@ -46,10 +46,9 @@ jobs:
       #       fi
       #     fi
 
-     - name: Generate Sample File
-       run: |
+      - name: Generate Sample File
+        run: |
           echo "Hello, GitHub Pages! Generated at $(date)" > index.html
-
         
       - name: Publish to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
